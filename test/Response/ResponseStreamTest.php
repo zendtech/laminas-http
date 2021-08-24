@@ -16,12 +16,12 @@ class ResponseStreamTest extends TestCase
     /** @var null|string */
     private $tempFile;
 
-    public function setUp(): void
+    public function setUp()
     {
         $this->tempFile = null;
     }
 
-    public function tearDown(): void
+    public function tearDown()
     {
         if (null !== $this->tempFile && file_exists($this->tempFile)) {
             unlink($this->tempFile);
@@ -96,22 +96,10 @@ class ResponseStreamTest extends TestCase
     /**
      * @see https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-3007
      */
-    public function testDestructionDoesNothingIfStreamIsNotAResourceAndStreamNameIsNotAString(): void
+    public function testDestructionDoesNothingIfStreamIsNotAResourceAndStreamNameIsNotAString()
     {
         $this->tempFile = tempnam(sys_get_temp_dir(), 'lhrs');
-        $streamObject = new class($this->tempFile) {
-            private $tempFile;
-
-            public function __construct(string $tempFile)
-            {
-                $this->tempFile = $tempFile;
-            }
-
-            public function __toString()
-            {
-                return $this->tempFile;
-            }
-        };
+        $streamObject = new TestAsset\StreamObject($this->tempFile);
 
         $response = new Stream();
         $response->setCleanup(true);
